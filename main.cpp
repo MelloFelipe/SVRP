@@ -6,13 +6,18 @@ int main() {
     int numberVertices;
     Graph graph;
 
+	/* Número de vértices do problema, incluindo o depósito */
     cin >> numberVertices;
 
+	/* Cria um grafo completo respeitando a desigualdade triangular */
     graph.createInstance(numberVertices);
     graph.printInstance();
+    
+    /* Encontra um primeiro caminho utilizando TSP força bruta */
     vector<int> route = graph.TSP();
 
-    vector<vector<double>> f = probDemandsInRoute(graph, route);
+	/* Dado este caminho, computa todas as probabilidades de demanda total até cada vértice */
+    vector<vector<double> > f = probDemandsInRoute(graph, route);
 
     cout << setprecision(3);
 
