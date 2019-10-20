@@ -7,12 +7,29 @@
 #include "graph.h"
 using namespace std;
 
+/*
+createInstance: Cria um grafo completo não-direcionado com "n" vértices
+utilizando uma matriz de adjacências e um vetor de vértices.
+Cada posição (i,j) da matriz indica a distância de um vértice i ao j.
+As distâncias respeitam a desigualdade triangular. No vetor de vértices,
+cada vértice possui uma demanda entre 3 possíveis intervalos, [1,9], [5,15]
+e [10,20].
+
+Entrada:
+n: número de vértices do grafo.
+*/
 void Graph::createInstance(int n) {
 
     vertex newVertex;
     default_random_engine generator;
+    
+    // Coordenadas possíveis dos vértices e probabilidade de presença
     uniform_real_distribution<double> coordinate(0, 100), presence(0,1);
+    
+    // Possíveis intervalos das demandas dos vértices
     uniform_int_distribution<int> demRange(1,3);
+    
+    // Possíveis demandas dos vértices para cada intervalo
     uniform_int_distribution<int> demand1(1,9), demand2(5,15), demand3(10,20);
 
     this->numberVertices = n;
@@ -94,6 +111,10 @@ void Graph::createInstance(int n) {
 
 }
 
+/*
+computeDistances: Computa as distâncias euclidianas de todos para todos os vértices,
+utilizando suas coordenadas.
+*/
 void Graph::computeDistances() {
 
     double x1, x2, y1, y2, dist;
@@ -117,6 +138,12 @@ void Graph::computeDistances() {
 
 }
 
+/*
+printInstance: Imprime os seguintes dados do problema:
+- Coordenadas do depósito;
+- Coordenadas de cada cliente, com suas probabilidades de presença e de demanda;
+- Distância de todos os vértices para todos (apenas uma vez, pois a distância de i a j é igual a de j a i;
+*/
 void Graph::printInstance() {
 
     cout << "Depot in: " << this->vertices[0].x << ' ' << this->vertices[0].y << "\n\n";
@@ -147,6 +174,13 @@ void Graph::printInstance() {
 
 }
 
+/*
+TSP: Algoritmo força bruta que encontra o menor caminho percorrendo todos os vértices,
+imprimindo a ordem que os vértices devem ser percorridos e o seu custo.
+
+Saída:
+minPath: vetor onde cada posição indica o próximo vértice a ser percorrido no caminho.
+*/
 vector<int> Graph::TSP() {
 
     vector<int> vtxRouteOrder, minPath;
