@@ -141,3 +141,82 @@ double probExceedsCapacity(int i, Graph g, vector<vector<double>> f, int capacit
     return probExceedsCap;
 
 }
+
+/*
+expectedLength: Calcula o custo esperado do segundo estágio dado uma rota.
+
+Entrada:
+g: grafo do problema sendo considerado;
+f: matriz n por 20*n, onde n é o número de vértices do grafo. A posição (i, j) da matriz
+indica a probabilidade da demanda até o vértice i ser j.
+capacity: capacidade máxima do veículo do problema.
+
+Saída: double indicando o custo esperado de se percorrer uma rota dada.
+*/
+double expectedLength(Graph g, vector<vector<double>> f, int capacity) {
+	
+	double expectedLength = 0, accPresence = 1;
+	
+	/* Como um vértice pode não estar presente, computa-se o custo de cada vértice ser o primeiro,
+	o que é igual à ele estar presente e os anteriores não estarem presentes vezes a distância
+	ao depósito */
+	for(int i = 1; i < g.numberVertices; i++) {
+		
+		for(int j = 1; j <= i-1; j++) {
+			accPresence *= (1 - g.vertices[j].probOfPresence);
+		}
+		
+		expectedLength += g.adjMatrix[0][i]*g.vertices[i].probOfPresence*accPresence;
+		accPresence = 1;
+	}
+	
+	/* Como um vértice pode não estar presente, computa-se o custo de cada vértice ser o último,
+	o que é igual à ele estar presente e os posteriores não estarem presentes vezes a distância
+	ao depósito */
+	for(int i = 1; i < g.numberVertices; i++) {
+		
+		for(int j = i+1; j < g.numberVertices; j++) {
+			accPresence *= (1 - g.vertices[j].probOfPresence);
+		}
+		
+		expectedLength += g.adjMatrix[i][0]*g.vertices[i].probOfPresence*accPresence;
+		accPresence = 1;
+	}
+	
+	/* Como um vértice pode não estar presente, computa-se o custo de cada possível próximo vértice
+	da rota, o que é igual à dois vértices estarem presentes e os vértices entre eles não, vezes
+	a distância entre esses vértices */
+	for(int i = 1; i < g.numberVertices; i++) {
+		
+		for(int j = i+1; j < g.numberVertices; j++) {
+			
+			for(int r = i+1; r <= j-1; r++) {
+				accPresence *= (1 - g.vertices[r].probOfPresence);
+			}
+		
+			expectedLength += g.adjMatrix[i][j]*g.vertices[i].probOfPresence*g.vertices[j].probOfPresence*accPresence;
+			accPresence = 1;
+		}
+	}
+	
+	/* Computar o custo "recurso" esperado, ou seja, a capacidade limite ser atingida e portanto o
+	veículo deve retornar ao depósito. */
+	for(int i = 1; i < g.numberVertices; i++) {
+		
+		/* Somar a probabilidade de exceder vezes o custo de retornar ao depósito */
+		expectedLength += (g.adjMatrix[i][0] + g.adjMatrix[0][i] - g.adjMatrix[i][i])*probExceedsCapacity(i,g,f,capacity);
+		
+		/* Somar a probabilidade de atingir exatamente a capacidade vezes o custo de retornar ao depósito */
+		for(int j = i+1; j < g.numberVertices; j++) {
+			
+			for(int r = i+1; r <= j-1; r++) {
+				accPresence *= (1 - g.vertices[r].probOfPresence);
+			}
+		
+			expectedLength += probReachCapacity(i,g,f,capacity)*g.vertices[j].probOfPresence*(g.adjMatrix[i][0] + g.adjMatrix[0][j] - g.adjMatrix[i][j])*accPresence;
+			accPresence = 1;
+		}
+	}
+	
+	return expectedLength;
+}
