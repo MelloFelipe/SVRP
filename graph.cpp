@@ -210,12 +210,12 @@ vector<int> Graph::TSP() {
 
     } while(next_permutation(vtxRouteOrder.begin(), vtxRouteOrder.end()));
 
-    cout << "Menor rota TSP: ";
+    cout << "Smallest TSP route: ";
     for (int i = 0; i < minPath.size(); i++)
         cout << minPath[i] << ' ';
     cout << endl;
 
-    cout << "Custo da rota TSP: " << minPathCost << endl;
+    cout << "Cost of TSP route: " << minPathCost << endl;
 
     return minPath;
 

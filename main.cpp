@@ -17,7 +17,8 @@ int main() {
 	cin >> verbosity;
 	
 	// Temporario: capacidade igual a esperança da demanda vezes metade do número de vértices
-	capacity = 10*(numberVertices+1/2);
+	capacity = max(20, 10*((numberVertices-1)/2));
+	cout << "Capacity: " << capacity << endl;
 	
 	/* Cria um grafo completo respeitando a desigualdade triangular */
     graph.createInstance(numberVertices);
@@ -43,7 +44,7 @@ int main() {
 	}
 
 	cout << "Expected cost of TSP route: ";
-	cout << expectedLength(graph, f, capacity);
+	cout << expectedLength(graph, f, capacity, route);
 	
     return 0;
 
