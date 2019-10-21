@@ -21,9 +21,9 @@ Observação: demanda máxima de um vértice é 20.
 vector<vector<double>> probDemandsInRoute(Graph g, vector<int> orderInRoute) {
 
 	// Inicializa a matriz com probabilidades 0
-    vector<double> v(20*g.numberVertices + 1, 0);
-    vector<vector<double>> f(g.numberVertices, v);
-    int next, m = 1, routeSize = g.numberVertices - 1;
+	int next, m = 1, routeSize = g.numberVertices - 1;
+    vector<double> v(20*routeSize + 1, 0);
+    vector<vector<double>> f(g.numberVertices + 1, v);
 
     while (m <= routeSize) {
 
@@ -31,7 +31,7 @@ vector<vector<double>> probDemandsInRoute(Graph g, vector<int> orderInRoute) {
         next = orderInRoute[m-1];
 
 		// Para todas as demandas possíveis
-        for (int r = 1; r <= 20*g.numberVertices; r++) {
+        for (int r = 1; r <= 20*routeSize; r++) {
 
 			// Se for o primeiro vértice, a probabilidade depende apenas da sua própria demanda
 			// Se não, consideramos as probabilidades de todas as demandas possíveis dos vértices anteriores

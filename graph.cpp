@@ -184,8 +184,8 @@ minPath: vetor onde cada posição indica o próximo vértice a ser percorrido no ca
 vector<int> Graph::TSP() {
 
     vector<int> vtxRouteOrder, minPath;
-    int vtx, pathCost = 0;
-    double minPathCost = INT32_MAX;
+    int vtx;
+    double pathCost = 0, minPathCost = INT32_MAX;
 
     for (int i = 1; i < this->numberVertices; i++) {
         vtxRouteOrder.push_back(i);
@@ -210,12 +210,12 @@ vector<int> Graph::TSP() {
 
     } while(next_permutation(vtxRouteOrder.begin(), vtxRouteOrder.end()));
 
-    cout << "Menor rota: ";
+    cout << "Menor rota TSP: ";
     for (int i = 0; i < minPath.size(); i++)
         cout << minPath[i] << ' ';
     cout << endl;
 
-    cout << "Custo: " << minPathCost << endl;
+    cout << "Custo da rota TSP: " << minPathCost << endl;
 
     return minPath;
 
