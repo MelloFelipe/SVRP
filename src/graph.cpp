@@ -46,6 +46,7 @@ void Graph::createInstance(int n) {
         // Gerar coordenadas dos vértices em [0,100]
         newVertex.x = coordinate(generator);
         newVertex.y = coordinate(generator);
+        newVertex.probDemand[0] = 0;
 
         if (i > 0) {
 

@@ -34,8 +34,8 @@ int main() {
     //cout << setprecision(3);
 
 	if(verbosity == 'y') {
-		for (int i = 1; i < graph.numberVertices; i++) {
-	        for (int j = 1; j <= 20*(graph.numberVertices-1); j++) {
+		for (int i = 0; i < graph.numberVertices; i++) {
+	        for (int j = 0; j <= 20*(graph.numberVertices-1); j++) {
 	        	cout << "("<< i << "," << j << "): ";
 	            cout << f[i][j] << " ";
 	        }
