@@ -8,28 +8,30 @@
 using namespace std;
 
 /*
-createInstance: Cria um grafo completo não-direcionado com "n" vértices
-utilizando uma matriz de adjacências e um vetor de vértices.
-Cada posição (i,j) da matriz indica a distância de um vértice i ao j.
-As distâncias respeitam a desigualdade triangular. No vetor de vértices,
-cada vértice possui uma demanda entre 3 possíveis intervalos, [1,9], [5,15]
+createInstance: Cria um grafo completo nÃ£o-direcionado com "n" vÃ©rtices
+utilizando uma matriz de adjacÃªncias e um vetor de vÃ©rtices.
+Cada posiÃ§Ã£o (i,j) da matriz indica a distÃ¢ncia de um vÃ©rtice i ao j.
+As distÃ¢ncias respeitam a desigualdade triangular. No vetor de vÃ©rtices,
+cada vÃ©rtice possui uma demanda entre 3 possÃ­veis intervalos, [1,9], [5,15]
 e [10,20].
 
 Entrada:
-n: número de vértices do grafo.
+n: nÃºmero de vÃ©rtices do grafo.
 */
 void Graph::createInstance(int n) {
 
     vertex newVertex;
-    default_random_engine generator;
-    
-    // Coordenadas possíveis dos vértices e probabilidade de presença
+    //default_random_engine generator;
+
+    // Coordenadas possÃ­veis dos vÃ©rtices e probabilidade de presenÃ§a
+    std::random_device rd;  //Will be used to obtain a seed for the random number engine
+    std::mt19937 generator(rd()); //Standard mersenne_twister_engine seeded with rd()
     uniform_real_distribution<double> coordinate(0, 100), presence(0,1);
-    
-    // Possíveis intervalos das demandas dos vértices
+
+    // PossÃ­veis intervalos das demandas dos vÃ©rtices
     uniform_int_distribution<int> demRange(1,3);
-    
-    // Possíveis demandas dos vértices para cada intervalo
+
+    // PossÃ­veis demandas dos vÃ©rtices para cada intervalo
     uniform_int_distribution<int> demand1(1,9), demand2(5,15), demand3(10,20);
 
     this->numberVertices = n;
@@ -58,7 +60,7 @@ void Graph::createInstance(int n) {
                 case 1:
 
                     for (int j = 1; j < 21; j++) {
-                        
+
                         if (j < 10) {
                             newVertex.probDemand[j] = 1.0/9.0;
                         } else {
@@ -71,9 +73,9 @@ void Graph::createInstance(int n) {
 
                 // Intervalo [5,15]
                 case 2:
-                                     
+
                     for (int j = 1; j < 21; j++) {
-                        
+
                         if (j >= 5 && j <= 15) {
                             newVertex.probDemand[j] = 1.0/11.0;
                         } else {
@@ -81,14 +83,14 @@ void Graph::createInstance(int n) {
                         }
 
                     }
-                    
+
                     break;
 
                 // Intervalo [10,20]
                 case 3:
 
                     for (int j = 1; j < 21; j++) {
-                        
+
                         if (j > 9) {
                             newVertex.probDemand[j] = 1.0/11.0;
                         } else {
@@ -102,7 +104,7 @@ void Graph::createInstance(int n) {
 
             }
 
-        } 
+        }
 
         this->vertices.push_back(newVertex);
     }
@@ -112,7 +114,7 @@ void Graph::createInstance(int n) {
 }
 
 /*
-computeDistances: Computa as distâncias euclidianas de todos para todos os vértices,
+computeDistances: Computa as distÃ¢ncias euclidianas de todos para todos os vÃ©rtices,
 utilizando suas coordenadas.
 */
 void Graph::computeDistances() {
@@ -140,9 +142,9 @@ void Graph::computeDistances() {
 
 /*
 printInstance: Imprime os seguintes dados do problema:
-- Coordenadas do depósito;
-- Coordenadas de cada cliente, com suas probabilidades de presença e de demanda;
-- Distância de todos os vértices para todos (apenas uma vez, pois a distância de i a j é igual a de j a i;
+- Coordenadas do depÃ³sito;
+- Coordenadas de cada cliente, com suas probabilidades de presenÃ§a e de demanda;
+- DistÃ¢ncia de todos os vÃ©rtices para todos (apenas uma vez, pois a distÃ¢ncia de i a j Ã© igual a de j a i;
 */
 void Graph::printInstance() {
 
@@ -175,11 +177,11 @@ void Graph::printInstance() {
 }
 
 /*
-TSP: Algoritmo força bruta que encontra o menor caminho percorrendo todos os vértices,
-imprimindo a ordem que os vértices devem ser percorridos e o seu custo.
+TSP: Algoritmo forÃ§a bruta que encontra o menor caminho percorrendo todos os vÃ©rtices,
+imprimindo a ordem que os vÃ©rtices devem ser percorridos e o seu custo.
 
-Saída:
-minPath: vetor onde cada posição indica o próximo vértice a ser percorrido no caminho.
+SaÃ­da:
+minPath: vetor onde cada posiÃ§Ã£o indica o prÃ³ximo vÃ©rtice a ser percorrido no caminho.
 */
 vector<int> Graph::TSP() {
 

@@ -6,29 +6,29 @@ int main() {
     int numberVertices;
     Graph graph;
     int capacity;
-    char verbosity; 
+    char verbosity;
 
-	/* Número de vértices do problema, incluindo o depósito */
+	/* NÃºmero de vÃ©rtices do problema, incluindo o depÃ³sito */
 	cout << "Enter with number of vertices including depot: ";
     cin >> numberVertices;
 
-	/* Imprimir todas as informações do grafo ou apenas a resposta */
+	/* Imprimir todas as informaÃ§Ãµes do grafo ou apenas a resposta */
 	cout << "Visualize all problem information? (y/n): ";
 	cin >> verbosity;
-	
-	// Temporario: capacidade igual a esperança da demanda vezes metade do número de vértices
+
+	// Temporario: capacidade igual a esperanÃ§a da demanda vezes metade do nÃºmero de vÃ©rtices
 	capacity = max(20, 10*((numberVertices-1)/2));
 	cout << "Capacity: " << capacity << endl;
-	
+
 	/* Cria um grafo completo respeitando a desigualdade triangular */
     graph.createInstance(numberVertices);
     if(verbosity == 'y')
     	graph.printInstance();
-    
-    /* Encontra um primeiro caminho utilizando TSP força bruta */
+
+    /* Encontra um primeiro caminho utilizando TSP forÃ§a bruta */
     vector<int> route = graph.TSP();
 
-	/* Dado este caminho, computa todas as probabilidades de demanda total até cada vértice */
+	/* Dado este caminho, computa todas as probabilidades de demanda total atÃ© cada vÃ©rtice */
     vector<vector<double> > f = probDemandsInRoute(graph, route);
 
     //cout << setprecision(3);
@@ -44,8 +44,8 @@ int main() {
 	}
 
 	cout << "Expected cost of TSP route: ";
-	cout << expectedLength(graph, f, capacity, route);
-	
+	cout << expectedLength(graph, f, capacity, route) << endl;
+
     return 0;
 
 }
