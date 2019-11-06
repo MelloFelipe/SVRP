@@ -6,11 +6,12 @@ public:
 
     Graph g;
     double penalty, bestPenalizedSol, bestSol;
-    int numVehicles, capacity, numSelected, numNearest;
+    int numVehicles, capacity, numSelected, numNearest, numRoutes;
     int itCount, numInfeasibleNearby;
     int currNoImprovement, maxNoImprovement;
-    vector<int> relativeDemand;
-    vector<vector<int>> routes, closestNeighbours;
+    vector<int> posClient;
+    vector<double> relativeDemand;
+    vector<vector<int>> routes, bestRoute, closestNeighbours;
 
     // Etapas
     TabuSearchSVRP(Graph g, int numVehicles, int capacity);
@@ -21,5 +22,9 @@ public:
 
     // Funções
     double penalizedExpectedLength(int solVehicles);
+    double pi(int rota, int cliente);
+    double alpha(int rota);
+    double A2(int a, int b, int c);
+    double approxCostMove(int selectedClient, int selectedNeighbour, double relativeDemand);
 
 };
