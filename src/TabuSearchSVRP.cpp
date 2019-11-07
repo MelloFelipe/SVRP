@@ -31,9 +31,15 @@ TabuSearchSVRP::TabuSearchSVRP(Graph inst, int numVehicles, int capacity) {
 
     }
 
+    for(int i = 0; i < this->g.numberVertices; i++) {
+      for(int j = 0; j < h; j++) {
+        cout << closestNeighbours[i][j] << " ";
+      }
+      cout << endl;
+    }
     this->posClient.resize(this->g.numberVertices);
     // Rotas de ida e volta ao depósito
-    for (int i = 1; i < this->g.numberVertices; i++) {
+    for (int i = 0; i < this->g.numberVertices; i++) {
 
         vector<int> route(1, i);
         this->routes.push_back(route);
@@ -117,9 +123,12 @@ TabuSearchSVRP::TabuSearchSVRP(Graph inst, int numVehicles, int capacity) {
       selectedNeighbour = this->closestNeighbours[selectedClient][selectedNeighbour];
 
       /* Computar ~F'(i,j,v) */
-      double approxCostMoveC = approxCostMove(selectedClient, selectedNeighbour, relativeDemand[selectedClient]);
       cout << "****************************************" << endl;
-      cout << "i=" << i << ":" << approxCostMoveC << endl;
+      cout << "i = " << i << ":" << endl;
+      cout << "selectedClient = "<< selectedClient << endl;
+      cout << "selectedNeighbour = " << selectedNeighbour << endl;
+      double approxCostMoveC = approxCostMove(selectedClient, selectedNeighbour, relativeDemand[selectedClient]);
+      cout << "custo aproximado = " << approxCostMoveC << endl;
     }
 }
 
@@ -148,7 +157,7 @@ double TabuSearchSVRP::pi(int rota, int cliente) {
 double TabuSearchSVRP::alpha(int rota) {
   double max = 0, aux = 0;
   for(int i = 0; i < routes[rota].size(); i++) {
-    aux = pi(rota, i);
+    aux = pi(rota, routes[rota][i]);
     if(aux > max)
       max = aux;
   }
@@ -196,12 +205,22 @@ double TabuSearchSVRP::approxCostMove(int selectedClient, int selectedNeighbour,
   }
 
   else {
+    cout << "beforeClient = "<< beforeClient << endl;
+    cout << "beforeNeighbour = " << beforeNeighbour << endl;
+    cout << "afterClient = "<< afterClient << endl;
+    cout << "a = " << A2(beforeNeighbour, selectedClient, selectedNeighbour) << endl;
+    cout << "b = " << A2(beforeClient, selectedClient, afterClient) << endl;
+    cout << "c = " << alpha(posClient[selectedNeighbour])*relativeDemand << endl;
+    cout << "d = " << pi(posClient[selectedClient], selectedClient) << endl;
 
     approxCost = A2(beforeNeighbour, selectedClient, selectedNeighbour)
                - A2(beforeClient, selectedClient, afterClient)
                +alpha(posClient[selectedNeighbour])*relativeDemand
                -pi(posClient[selectedClient], selectedClient);
   }
+
+  approxCost += penalty*(1/(double)(routes[posClient[selectedNeighbour]].size()+1)
+                        -1/(double)(routes[posClient[selectedClient]].size()));
 
   return approxCost;
 }

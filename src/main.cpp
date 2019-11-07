@@ -34,10 +34,10 @@ int main() {
 	TabuSearchSVRP ts(graph, numberVehicles, capacity);
 
     /* Definir rotas do primeiro estágio aleatoriamente */
-	vector<vector<int>> routes = randomRoutes(numberVertices, numberVehicles);
+	/*vector<vector<int>> routes = randomRoutes(numberVertices, numberVehicles);
 
 	cout << "Total expected length: ";
-	cout << totalExpectedLength(graph, capacity, routes) << endl;
+	cout << totalExpectedLength(graph, capacity, routes) << endl;*/
 
     return 0;
 
