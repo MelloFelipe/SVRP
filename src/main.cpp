@@ -31,14 +31,24 @@ int main() {
     if(verbosity == 'y')
     	graph.printInstance();
 
-	TabuSearchSVRP ts(graph, numberVehicles, capacity);
+//	TabuSearchSVRP ts(graph, numberVehicles, capacity);
 
     /* Definir rotas do primeiro estágio aleatoriamente */
-	/*vector<vector<int>> routes = randomRoutes(numberVertices, numberVehicles);
+	vector<vector<int>> routes = randomRoutes(numberVertices, numberVehicles);
 
 	cout << "Total expected length: ";
-	cout << totalExpectedLength(graph, capacity, routes) << endl;*/
+	cout << totalExpectedLength(graph, capacity, routes) << endl;
 
-    return 0;
+  cout <<"*********************" << endl;
+  for(int i = 0; i < routes.size(); i++) {
+      for(int j = 0; j < routes[i].size(); j++) {
+        cout << routes[i][j] << " ";
+      }
+      cout << endl << "Brute Force computed expected cost: ";
+      cout << bruteForce(graph, capacity, routes);
+      cout << endl;
+  }
+
+  return 0;
 
 }
