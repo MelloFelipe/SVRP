@@ -6,7 +6,7 @@ char verbosity;
 
 int main() {
 
-    Graph graph;
+  Graph graph;
 	double fillingCoeff;
 	int capacity, numberVertices, numberVehicles;
 
@@ -31,23 +31,15 @@ int main() {
     if(verbosity == 'y')
     	graph.printInstance();
 
-//	TabuSearchSVRP ts(graph, numberVehicles, capacity);
+	//TabuSearchSVRP ts(graph, numberVehicles, capacity);
 
     /* Definir rotas do primeiro estágio aleatoriamente */
 	vector<vector<int>> routes = randomRoutes(numberVertices, numberVehicles);
 
-	cout << "Total expected length: ";
-	cout << totalExpectedLength(graph, capacity, routes) << endl;
-
-  cout <<"*********************" << endl;
-  for(int i = 0; i < routes.size(); i++) {
-      for(int j = 0; j < routes[i].size(); j++) {
-        cout << routes[i][j] << " ";
-      }
-      cout << endl << "Brute Force computed expected cost: ";
-      cout << bruteForce(graph, capacity, routes);
-      cout << endl;
-  }
+	double totalExpectedCost = totalExpectedLength(graph, capacity, routes);
+  cout << "Total expected length: " << totalExpectedCost << endl;
+  cout << endl << "Brute Force computed expected cost: ";
+  cout << bruteForce(graph, capacity, routes);
 
   return 0;
 
