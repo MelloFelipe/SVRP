@@ -43,6 +43,8 @@ int main() {
   if(verbosity == 'y')
   	graph.printInstance();
 
+  graph.drawGraph("instancia_entrada");
+
 	TabuSearchSVRP ts;
 
   clock_t begin = clock();

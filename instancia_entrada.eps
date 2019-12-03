@@ -1,0 +1,133 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: Figura do grafo
+%%Copyright: (C) 2003-2007 LEMON Project
+%%Creator: LEMON, graphToEps()
+%%CreationDate: Tue Dec  3 19:32:02 2019
+%%BoundingBox: -22 38 822 922
+%%EndComments
+/lb { setlinewidth setrgbcolor newpath moveto
+      4 2 roll 1 index 1 index curveto stroke } bind def
+/l { setlinewidth setrgbcolor newpath moveto lineto stroke } bind def
+/c { newpath dup 3 index add 2 index moveto 0 360 arc closepath } bind def
+/sq { newpath 2 index 1 index add 2 index 2 index add moveto
+      2 index 1 index sub 2 index 2 index add lineto
+      2 index 1 index sub 2 index 2 index sub lineto
+      2 index 1 index add 2 index 2 index sub lineto
+      closepath pop pop pop} bind def
+/di { newpath 2 index 1 index add 2 index moveto
+      2 index             2 index 2 index add lineto
+      2 index 1 index sub 2 index             lineto
+      2 index             2 index 2 index sub lineto
+      closepath pop pop pop} bind def
+/nc { 0 0 0 setrgbcolor 5 index 5 index 5 index c fill
+     setrgbcolor 1.1 div c fill
+   } bind def
+/nsq { 0 0 0 setrgbcolor 5 index 5 index 5 index sq fill
+     setrgbcolor 1.1 div sq fill
+   } bind def
+/ndi { 0 0 0 setrgbcolor 5 index 5 index 5 index di fill
+     setrgbcolor 1.1 div di fill
+   } bind def
+/nfemale { 0 0 0 setrgbcolor 3 index 0.0909091 1.5 mul mul setlinewidth
+  newpath 5 index 5 index moveto 5 index 5 index 5 index 3.01 mul sub
+  lineto 5 index 4 index .7 mul sub 5 index 5 index 2.2 mul sub moveto
+  5 index 4 index .7 mul add 5 index 5 index 2.2 mul sub lineto stroke
+  5 index 5 index 5 index c fill
+  setrgbcolor 1.1 div c fill
+  } bind def
+/nmale {
+  0 0 0 setrgbcolor 3 index 0.0909091 1.5 mul mul setlinewidth
+  newpath 5 index 5 index moveto
+  5 index 4 index 1 mul 1.5 mul add
+  5 index 5 index 3 sqrt 1.5 mul mul add
+  1 index 1 index lineto
+  1 index 1 index 7 index sub moveto
+  1 index 1 index lineto
+  exch 5 index 3 sqrt .5 mul mul sub exch 5 index .5 mul sub lineto
+  stroke
+  5 index 5 index 5 index c fill
+  setrgbcolor 1.1 div c fill
+  } bind def
+/arrl 1 def
+/arrw 0.3 def
+/lrl { 2 index mul exch 2 index mul exch rlineto pop} bind def
+/arr { setrgbcolor /y1 exch def /x1 exch def /dy exch def /dx exch def
+       /w exch def /len exch def
+       newpath x1 dy w 2 div mul add y1 dx w 2 div mul sub moveto
+       len w sub arrl sub dx dy lrl
+       arrw dy dx neg lrl
+       dx arrl w add mul dy w 2 div arrw add mul sub
+       dy arrl w add mul dx w 2 div arrw add mul add rlineto
+       dx arrl w add mul neg dy w 2 div arrw add mul sub
+       dy arrl w add mul neg dx w 2 div arrw add mul add rlineto
+       arrw dy dx neg lrl
+       len w sub arrl sub neg dx dy lrl
+       closepath fill } bind def
+/cshow { 2 index 2 index moveto dup stringwidth pop
+         neg 2 div fosi .35 mul neg rmoveto show pop pop} def
+
+gsave
+10 dup scale
+%Arcs:
+gsave
+52 35 21 90 0 0 0 0.348 l
+46 10 21 90 0 0 0 0.348 l
+46 10 52 35 0 0 0 0.348 l
+0 12 21 90 0 0 0 0.348 l
+0 12 52 35 0 0 0 0.348 l
+0 12 46 10 0 0 0 0.348 l
+52 24 21 90 0 0 0 0.348 l
+52 24 52 35 0 0 0 0.348 l
+52 24 46 10 0 0 0 0.348 l
+52 24 0 12 0 0 0 0.348 l
+6 72 21 90 0 0 0 0.348 l
+6 72 52 35 0 0 0 0.348 l
+6 72 46 10 0 0 0 0.348 l
+6 72 0 12 0 0 0 0.348 l
+6 72 52 24 0 0 0 0.348 l
+23 32 21 90 0 0 0 0.348 l
+23 32 52 35 0 0 0 0.348 l
+23 32 46 10 0 0 0 0.348 l
+23 32 0 12 0 0 0 0.348 l
+23 32 52 24 0 0 0 0.348 l
+23 32 6 72 0 0 0 0.348 l
+69 6 21 90 0 0 0 0.348 l
+69 6 52 35 0 0 0 0.348 l
+69 6 46 10 0 0 0 0.348 l
+69 6 0 12 0 0 0 0.348 l
+69 6 52 24 0 0 0 0.348 l
+69 6 6 72 0 0 0 0.348 l
+69 6 23 32 0 0 0 0.348 l
+79 9 21 90 0 0 0 0.348 l
+79 9 52 35 0 0 0 0.348 l
+79 9 46 10 0 0 0 0.348 l
+79 9 0 12 0 0 0 0.348 l
+79 9 52 24 0 0 0 0.348 l
+79 9 6 72 0 0 0 0.348 l
+79 9 23 32 0 0 0 0.348 l
+79 9 69 6 0 0 0 0.348 l
+80 53 21 90 0 0 0 0.348 l
+80 53 52 35 0 0 0 0.348 l
+80 53 46 10 0 0 0 0.348 l
+80 53 0 12 0 0 0 0.348 l
+80 53 52 24 0 0 0 0.348 l
+80 53 6 72 0 0 0 0.348 l
+80 53 23 32 0 0 0 0.348 l
+80 53 69 6 0 0 0 0.348 l
+80 53 79 9 0 0 0 0.348 l
+grestore
+%Nodes:
+gsave
+21 90 1.16 1 1 1 nc
+52 35 1.16 1 1 1 nc
+46 10 1.16 1 1 1 nc
+0 12 1.16 1 1 1 nc
+52 24 1.16 1 1 1 nc
+6 72 1.16 1 1 1 nc
+23 32 1.16 1 1 1 nc
+69 6 1.16 1 1 1 nc
+79 9 1.16 1 1 1 nc
+80 53 1.16 1 1 1 nc
+grestore
+grestore
+showpage
