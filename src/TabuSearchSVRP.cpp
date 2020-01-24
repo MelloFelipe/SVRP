@@ -75,7 +75,44 @@ svrpSol TabuSearchSVRP::run(Graph inst, int numVehicles, int capacity) {
 
 	}
 
+	/* 2-OPT */
+	for(int i = 0; i < this->bestFeasibleSol.routes.size(); i++) {
+
+		int size = this->bestFeasibleSol.routes[i].size();
+		int improve = 0;
+
+		while(improve < 20) {
+
+			double best_distance = this->bestFeasibleSol.expectedCost;
+			for(int j = 0; j < size - 1; j++) {
+
+				for(int k = j + 1; k < size; k++) {
+
+					TwoOptSwap(i,j,k);
+					double new_distance = totalExpectedLength(inst, capacity, this->bestFeasibleSol.routes);
+
+					if(new_distance < best_distance) {
+						improve = 0;
+						this->bestFeasibleSol.expectedCost = new_distance;
+						best_distance = new_distance;
+					}
+					else {
+						TwoOptSwap(i,j,k);
+					}
+				}
+			}
+
+			improve++;
+		}
+
+	}
+
 	return this->bestFeasibleSol;
+}
+
+void TabuSearchSVRP::TwoOptSwap(int i,int j,int k) {
+	int size = this->bestFeasibleSol.routes[i].size();
+
 }
 
 /* Etapa 1: construir solução e estruturas iniciais */
@@ -88,6 +125,7 @@ void TabuSearchSVRP::initialize(Graph inst, int numVehicles, int capacity) {
   this->numVehicles = numVehicles;
   this->capacity = capacity;
 
+	kmeans_main(this->g, this->numVehicles);
   int h = min(this->g.numberVertices - 1, 10);
 
 	this->closestNeighbours.clear();

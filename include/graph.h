@@ -1,6 +1,6 @@
-#include<lemon/math.h>
-#include<lemon/graph_to_eps.h>
-#include<lemon/list_graph.h>
+//#include<lemon/math.h>
+//#include<lemon/graph_to_eps.h>
+//#include<lemon/list_graph.h>
 #include<iostream>
 #include<algorithm>
 #include<cmath>
@@ -10,7 +10,7 @@
 #include<time.h>
 
 using namespace std;
-using namespace lemon;
+//using namespace lemon;
 extern char verbosity;
 
 struct vertex {

@@ -1,4 +1,4 @@
-#include "graph.h"
+#include "kmeans.h"
 
 #define MAX_ITERATIONS 10000
 
@@ -121,5 +121,6 @@ private:
     double maxRemovalCost(int r);
     double approxInsertImpact(int a, int b, int c);
     double approxMoveCost(routeMove m);
+    void TwoOptSwap(int i, int j, int k);
 
 };
