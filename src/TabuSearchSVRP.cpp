@@ -111,8 +111,10 @@ svrpSol TabuSearchSVRP::run(Graph inst, int numVehicles, int capacity) {
 }
 
 void TabuSearchSVRP::TwoOptSwap(int i,int j,int k) {
-	int size = this->bestFeasibleSol.routes[i].size();
-
+	//int size = this->bestFeasibleSol.routes[i].size();
+  int aux = this->bestFeasibleSol.routes[i][j];
+	this->bestFeasibleSol.routes[i][j] = this->bestFeasibleSol.routes[i][k];
+	this->bestFeasibleSol.routes[i][k] = aux;
 }
 
 /* Etapa 1: construir solução e estruturas iniciais */

@@ -192,6 +192,7 @@ void KMeans::run(vector<Point>& all_points){
     cout<<"========================"<<endl<<endl;
 
     //Write cluster centers to file
+    /*
     ofstream outfile;
     outfile.open("clusters.txt");
     if(outfile.is_open()){
@@ -208,7 +209,7 @@ void KMeans::run(vector<Point>& all_points){
     }
     else{
         cout<<"Error: Unable to write to clusters.txt";
-    }
+    }*/
 
 }
 
