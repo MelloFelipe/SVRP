@@ -228,7 +228,7 @@ vector<int> Graph::TSP() {
 }
 
 void Graph::drawGraph(string graphName) {
-
+/*
   Palette palette;
   Palette paletteW(true);
 
@@ -270,13 +270,15 @@ void Graph::drawGraph(string graphName) {
   }
 
   cout << "Create " << graphName << endl;
+
   graphToEps(g, graphName).
     coords(coords).
     title("Figura do grafo").
     copyright("(C) 2003-2007 LEMON Project").
     nodeColors(composeMap(palette,colors)).
     edgeColors(composeMap(palette,ecolors)).
-    run();
-
+    run();*/
+    cout << "Funcao nao funciona no Windows";
+    return;
 
 }

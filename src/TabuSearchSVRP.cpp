@@ -75,7 +75,46 @@ svrpSol TabuSearchSVRP::run(Graph inst, int numVehicles, int capacity) {
 
 	}
 
+	/* 2-OPT */
+	for(int i = 0; i < this->bestFeasibleSol.routes.size(); i++) {
+
+		int size = this->bestFeasibleSol.routes[i].size();
+		int improve = 0;
+
+		while(improve < 20) {
+
+			double best_distance = this->bestFeasibleSol.expectedCost;
+			for(int j = 0; j < size - 1; j++) {
+
+				for(int k = j + 1; k < size; k++) {
+
+					TwoOptSwap(i,j,k);
+					double new_distance = totalExpectedLength(inst, capacity, this->bestFeasibleSol.routes);
+
+					if(new_distance < best_distance) {
+						improve = 0;
+						this->bestFeasibleSol.expectedCost = new_distance;
+						best_distance = new_distance;
+					}
+					else {
+						TwoOptSwap(i,j,k);
+					}
+				}
+			}
+
+			improve++;
+		}
+
+	}
+
 	return this->bestFeasibleSol;
+}
+
+void TabuSearchSVRP::TwoOptSwap(int i,int j,int k) {
+	//int size = this->bestFeasibleSol.routes[i].size();
+  int aux = this->bestFeasibleSol.routes[i][j];
+	this->bestFeasibleSol.routes[i][j] = this->bestFeasibleSol.routes[i][k];
+	this->bestFeasibleSol.routes[i][k] = aux;
 }
 
 /* Etapa 1: construir solução e estruturas iniciais */
@@ -88,6 +127,7 @@ void TabuSearchSVRP::initialize(Graph inst, int numVehicles, int capacity) {
   this->numVehicles = numVehicles;
   this->capacity = capacity;
 
+	//kmeans_main(this->g, this->numVehicles);
   int h = min(this->g.numberVertices - 1, 10);
 
 	this->closestNeighbours.clear();
@@ -115,13 +155,44 @@ void TabuSearchSVRP::initialize(Graph inst, int numVehicles, int capacity) {
 	this->sol.routes.clear();
 
   // Rotas de ida e volta ao depósito
-  for (int i = 1; i < this->g.numberVertices; i++) {
+  /*for (int i = 1; i < this->g.numberVertices; i++) {
 
     vector<int> route(1, i);
     this->sol.routes.push_back(route);
     this->routeOfClient[i] = i-1;
 
-  }
+  }*/
+
+	//Fetching number of clusters
+	int K = numVehicles;
+
+	//Fetching points from file
+	int pointId = 1;
+	vector<Point> all_points;
+
+	for(int i = 0; i < g.numberVertices - 1; i++) {
+		Point point(pointId, g.vertices[i+1].x,g.vertices[i+1].x);
+		all_points.push_back(point);
+		pointId++;
+	}
+
+	//Running K-Means Clustering
+	int iters = 100;
+
+	KMeans kmeans(K, iters);
+	kmeans.run(all_points);
+
+	for (int i = 0; i < K; i++) {
+
+		vector<int> route(1, kmeans.clusters[i].getPoint(0).getID());
+		this->sol.routes.push_back(route);
+		this->routeOfClient[kmeans.clusters[i].getPoint(0).getID()] = i;
+
+		for(int j = 1; j < kmeans.clusters[i].getSize(); j++) {
+			this->sol.routes[i].push_back(kmeans.clusters[i].getPoint(j).getID());
+			this->routeOfClient[kmeans.clusters[i].getPoint(j).getID()] = i;
+		}
+	}
 
   this->penalty = 1;
 	this->numRoutes = this->g.numberVertices - 1;
