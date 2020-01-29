@@ -76,11 +76,11 @@ public:
 class KMeans{
 private:
     int K, iters, dimensions, total_points;
-    vector<Cluster> clusters;
 
     int getNearestClusterId(Point point);
 
 public:
+    vector<Cluster> clusters;
     KMeans(int K, int iterations){
         this->K = K;
         this->iters = iterations;

@@ -5,17 +5,17 @@
 OBJ_DIR = obj
 SRC_DIR = src
 
-OBJS = $(OBJ_DIR)/main.o $(OBJ_DIR)/SVRP.o $(OBJ_DIR)/TabuSearchSVRP.o $(OBJ_DIR)/graph.o
+OBJS = $(OBJ_DIR)/main.o $(OBJ_DIR)/SVRP.o $(OBJ_DIR)/TabuSearchSVRP.o $(OBJ_DIR)/graph.o $(OBJ_DIR)/kmeans.o
 
 BINARY_NAME = svrp
-LINKING_FLAGS = -O3 -std=c++11 -lemon
+LINKING_FLAGS = -O3 -std=c++11 #-lemon
 COMPILATION_FLAGS = -c -O3 -std=c++11 -Iinclude
 
 ######################################################################################################################################
 # COMPILAÇÃO
 ######################################################################################################################################
 
-all: create_obj_dir $(OBJS)
+all: $(OBJS)
 		g++ $(OBJS) -o $(BINARY_NAME) $(LINKING_FLAGS)
 
 create_obj_dir:

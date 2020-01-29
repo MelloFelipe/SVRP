@@ -125,7 +125,7 @@ void TabuSearchSVRP::initialize(Graph inst, int numVehicles, int capacity) {
   this->numVehicles = numVehicles;
   this->capacity = capacity;
 
-	kmeans_main(this->g, this->numVehicles);
+	//kmeans_main(this->g, this->numVehicles);
   int h = min(this->g.numberVertices - 1, 10);
 
 	this->closestNeighbours.clear();
@@ -153,13 +153,44 @@ void TabuSearchSVRP::initialize(Graph inst, int numVehicles, int capacity) {
 	this->sol.routes.clear();
 
   // Rotas de ida e volta ao depósito
-  for (int i = 1; i < this->g.numberVertices; i++) {
+  /*for (int i = 1; i < this->g.numberVertices; i++) {
 
     vector<int> route(1, i);
     this->sol.routes.push_back(route);
     this->routeOfClient[i] = i-1;
 
-  }
+  }*/
+
+	//Fetching number of clusters
+	int K = numVehicles;
+
+	//Fetching points from file
+	int pointId = 1;
+	vector<Point> all_points;
+
+	for(int i = 0; i < g.numberVertices - 1; i++) {
+		Point point(pointId, g.vertices[i+1].x,g.vertices[i+1].x);
+		all_points.push_back(point);
+		pointId++;
+	}
+
+	//Running K-Means Clustering
+	int iters = 100;
+
+	KMeans kmeans(K, iters);
+	kmeans.run(all_points);
+
+	for (int i = 0; i < K; i++) {
+
+		vector<int> route(1, kmeans.clusters[i].getPoint(0).getID());
+		this->sol.routes.push_back(route);
+		this->routeOfClient[kmeans.clusters[i].getPoint(0).getID()] = i;
+
+		for(int j = 1; j < kmeans.clusters[i].getSize(); j++) {
+			this->sol.routes[i].push_back(kmeans.clusters[i].getPoint(j).getID());
+			this->routeOfClient[kmeans.clusters[i].getPoint(j).getID()] = i;
+		}
+	}
 
   this->penalty = 1;
 	this->numRoutes = this->g.numberVertices - 1;
