@@ -22,7 +22,7 @@ public:
         clusterId = 0; //Initially not assigned to any cluster
     }
 
-    Point(int id, int x, int y) {
+    Point(int id, double x, double y) {
         dimensions = 2;
         pointId = id;
         clusterId = 0; //Initially not assigned to any cluster
@@ -75,7 +75,7 @@ public:
 
 class KMeans{
 private:
-    int K, iters, dimensions, total_points;
+    int K, iters, dimensions=2, total_points=1;
 
     int getNearestClusterId(Point point);
 

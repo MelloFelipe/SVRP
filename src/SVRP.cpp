@@ -25,7 +25,7 @@ vector<vector<double>> probTotalDemand(Graph g, vector<int> route) {
 
 	// Inicializa a matriz com probabilidades 0
 	int next, orderInRoute = 1, routeSize = route.size();
-	vector<double> v(20*routeSize + 1, 0);
+	vector<double> v(20 * routeSize + 1, 0);
 	vector<vector<double>> f(route.size() + 1, v);
 	double probDemandK;
 
@@ -37,13 +37,13 @@ vector<vector<double>> probTotalDemand(Graph g, vector<int> route) {
 		next = route[orderInRoute - 1];
 
 		// Probabilidade de não haver nenhuma carga até o cliente, ou seja, todos ausentes
-		f[orderInRoute][0] = (1 - g.vertices[next].probOfPresence)*f[orderInRoute-1][0];
+		f[orderInRoute][0] = (1 - g.vertices[next].probOfPresence) * f[orderInRoute - 1][0];
 
 		// Para todas as demandas até o cliente possíveis
 		for (int dem = 1; dem <= 20 * orderInRoute; dem++) {
 
 			// Probabilidade do cliente estar ausente, mantendo a mesma demanda anterior
-			f[orderInRoute][dem] += (1-g.vertices[next].probOfPresence) * f[orderInRoute - 1][dem];
+			f[orderInRoute][dem] += (1 - g.vertices[next].probOfPresence) * f[orderInRoute - 1][dem];
 
 			// Para todas as demandas possíveis do cliente
 			for (int k = 1; k <= min(20, dem); k++) {
@@ -139,6 +139,29 @@ double probExceedsCapacity(int i, Graph g, vector<vector<double>> f, int capacit
 	return probExceedsCap;
 }
 
+double probExceedsCapacity(int i, Graph g, vector<vector<double>> f, int capacity, vector<int> orderInRoute, int j) {
+
+	double probExceedsCap = 0, probDemandExceeds = 0;
+	int vtx = orderInRoute[i];
+
+	// Para todas as possíveis "k" capacidades residuais no vértice anterior a "i"
+	for (int k = 1; k <= 19; k++) {
+
+		// Para todas as possíveis demandas "r" do vértice "i" maiores do que "k"
+		for (int r = k + 1; r <= 20; r++) {
+			probDemandExceeds += g.vertices[vtx].probOfPresence * g.vertices[vtx].probDemand[r];
+		}
+
+		/* Somar probabilidade de que a demanda em "i" é maior do que "k"
+		e que a demanda anterior a "i" seja igual a q*capacity-k */
+		if(j * capacity - k < 20 * orderInRoute.size() + 1)
+			probExceedsCap += probDemandExceeds * f[i][j * capacity - k];
+		probDemandExceeds = 0;
+	}
+
+	return probExceedsCap;
+}
+
 /*
 returnCost: Calcula o custo de ir ao depósito a partir do cliente i e retornar ao cliente j.
 i e j são as posições dos clientes na rota orderInRoute;
@@ -213,7 +236,7 @@ double routeExpectedLength(Graph g, vector<vector<double>> f, int capacity, vect
 
 		// Somar a probabilidade de exceder vezes o custo de retornar ao depósito
 		double expectedLength4;
-		if(i == 0) {
+		if (i == 0) {
 			expectedLength4 = 0;
 		}
 		else {
@@ -252,23 +275,23 @@ double totalExpectedLength(Graph g, int capacity, vector<vector<int>> routes) {
 
 	double totalExpLength = 0;
 
-	for (int r = 0; r < routes.size(); r++) {
+	for (unsigned int r = 0; r < routes.size(); r++) {
 
-		if(routes[r].size() == 0)
+		if (routes[r].size() == 0)
 			continue;
 		vector<vector<double>> f = probTotalDemand(g, routes[r]);
 		double routeExpLength = routeExpectedLength(g, f, capacity, routes[r]);
 
-		if(false) {//verbosity == 'y') {
+		if (false) {//verbosity == 'y') {
 			cout << "------------------------------------------------------------\n\n";
 			cout << "f(i,j): prob. of total demand being equal to j on the ith client of the route\n\n";
-			for (int i = 1; i <= routes[r].size(); i++) {
-	        	for (int j = 0; j <= 20*routes[r].size(); j++) {
-	        		cout << "f("<< i << "," << j << "): ";
-	            	cout << f[i][j] << " ";
-	        	}
-	        	cout << "\n\n";
-	    	}
+			for (unsigned int i = 1; i <= routes[r].size(); i++) {
+				for (unsigned int j = 0; j <= 20 * routes[r].size(); j++) {
+					cout << "f(" << i << "," << j << "): ";
+					cout << f[i][j] << " ";
+				}
+				cout << "\n\n";
+			}
 			cout << "------------------------------------------------------------\n\n";
 		}
 
@@ -293,59 +316,59 @@ os vértices devem ser percorridos.
 */
 vector<vector<int>> randomRoutes(int numberVertices, int numberVehicles) {
 
-    vector<int> costumers;
+	vector<int> costumers;
 
-    for (int i = 1; i < numberVertices; i++)
-        costumers.push_back(i);
+	for (int i = 1; i < numberVertices; i++)
+		costumers.push_back(i);
 
-    srand(time(0));
-    random_shuffle(costumers.begin(), costumers.end(), [](int i){ return rand()%i; });
+	srand(time(0));
+	random_shuffle(costumers.begin(), costumers.end(), [](int i) { return rand() % i; });
 
-    vector<vector<int>> routes(numberVehicles);
-    int routeSize = numberVertices / numberVehicles;
+	vector<vector<int>> routes(numberVehicles);
+	int routeSize = numberVertices / numberVehicles;
 
-    cout << endl;
+	cout << endl;
 
-    for (int r = 0; r < numberVehicles; r++) {
+	for (int r = 0; r < numberVehicles; r++) {
 
-        auto start_it = next(costumers.begin(), r*routeSize);
-        auto end_it = next(costumers.begin(), r*routeSize + routeSize);
+		auto start_it = next(costumers.begin(), r * routeSize);
+		auto end_it = next(costumers.begin(), r * routeSize + routeSize);
 
-        routes[r].resize(routeSize);
+		routes[r].resize(routeSize);
 
-        // Colocar o que restou na última rota
-        if (r == numberVehicles - 1) {
-            end_it = costumers.end();
-            routes[r].resize(costumers.size() - r*routeSize);
-        }
+		// Colocar o que restou na última rota
+		if (r == numberVehicles - 1) {
+			end_it = costumers.end();
+			routes[r].resize(costumers.size() - r * routeSize);
+		}
 
-        copy(start_it, end_it, routes[r].begin());
+		copy(start_it, end_it, routes[r].begin());
 
-        cout << "Route " << r + 1 << ": ";
+		cout << "Route " << r + 1 << ": ";
 
-        for (int i = 0; i < routes[r].size(); i++)
-            cout << routes[r][i] << ' ';
+		for (unsigned int i = 0; i < routes[r].size(); i++)
+			cout << routes[r][i] << ' ';
 
-        cout << endl;
+		cout << endl;
 
-    }
+	}
 
-    cout << endl;
+	cout << endl;
 
-    return routes;
+	return routes;
 
 }
 
 double costCen(vector<vector<int>> A, vector<int> B, Graph g, vector<int> route, int capacity) {
 
-  int iter = 0, currCap = 0, currClient = 0, proxClient = route[0];
+	int iter = 0, currCap = 0, currClient = 0, proxClient = route[0];
 	double costRoute = 0;
 
-	while(iter != route.size()-1) {
+	while (iter != route.size() - 1) {
 
 		costRoute += g.adjMatrix[currClient][proxClient];
 
-		if(currCap + A[iter][B[iter]] == capacity) {
+		if (currCap + A[iter][B[iter]] == capacity) {
 
 			costRoute += g.adjMatrix[proxClient][0];
 			currCap = 0;
@@ -354,7 +377,7 @@ double costCen(vector<vector<int>> A, vector<int> B, Graph g, vector<int> route,
 			proxClient = route[iter];
 		}
 
-		else if(currCap + A[iter][B[iter]] > capacity) {
+		else if (currCap + A[iter][B[iter]] > capacity) {
 
 			costRoute += g.adjMatrix[proxClient][0];
 			currCap = currCap - capacity;
@@ -373,7 +396,7 @@ double costCen(vector<vector<int>> A, vector<int> B, Graph g, vector<int> route,
 
 	costRoute += g.adjMatrix[currClient][proxClient];
 
-	if(currCap + A[iter][B[iter]] > capacity) {
+	if (currCap + A[iter][B[iter]] > capacity) {
 
 		costRoute += g.adjMatrix[proxClient][0];
 		costRoute += g.adjMatrix[0][proxClient];
@@ -392,27 +415,27 @@ double bruteForce(Graph g, int capacity, vector<vector<int>> routes) {
 
 	double expectedRoutesCost = 0, acc, acc1;
 	vector<int> presence, cenRoute;
-	int iter = 0;
+	unsigned int iter = 0;
 
-	for(int i = 0; i < routes.size(); i++) {
+	for (unsigned int i = 0; i < routes.size(); i++) {
 
 		presence.resize(routes[i].size());
 		presence[0] = 1;
-		for(int j = 1; j < routes[i].size(); j++) {
+		for (unsigned int j = 1; j < routes[i].size(); j++) {
 			presence[j] = 0;
 		}
 
 		acc1 = 0;
-		for(int k = 0; k < pow(2,routes[i].size())-1; k++) {
+		for (int k = 0; k < pow(2, routes[i].size()) - 1; k++) {
 
-			for(int l = 0; l < routes[i].size(); l++) {
-				if(presence[l] == 1)
+			for (unsigned int l = 0; l < routes[i].size(); l++) {
+				if (presence[l] == 1)
 					cenRoute.push_back(routes[i][l]);
 			}
 
 			acc = bruteForceCost(g, capacity, cenRoute);
-			for(int j = 0; j < routes[i].size(); j++) {
-				if(presence[j] == 0) {
+			for (unsigned int j = 0; j < routes[i].size(); j++) {
+				if (presence[j] == 0) {
 					acc *= (1 - g.vertices[routes[i][j]].probOfPresence);
 				}
 				else {
@@ -422,8 +445,8 @@ double bruteForce(Graph g, int capacity, vector<vector<int>> routes) {
 
 			cenRoute.clear();
 			iter = 0;
-			while(iter < routes[i].size()) {
-				if(presence[iter] == 0) {
+			while (iter < routes[i].size()) {
+				if (presence[iter] == 0) {
 					presence[iter] = 1;
 					break;
 				}
@@ -441,23 +464,23 @@ double bruteForce(Graph g, int capacity, vector<vector<int>> routes) {
 
 double bruteForceCost(Graph g, int capacity, vector<int> route) {
 
-	if(route.empty())
+	if (route.empty())
 		return 0;
 
 	double expectedRouteCost = 0, expectedCenCost = 0;
 	int numClients = route.size(), numDiffDemand = 11, i, j, k;
 
-	vector<int> col(numDiffDemand+1, -1);
+	vector<int> col(numDiffDemand + 1, -1);
 	vector<vector<int>> A(numClients, col);
 
-	for(i = 0; i < numClients; i++) {
+	for (i = 0; i < numClients; i++) {
 
 		k = 0;
-		while(g.vertices[route[i]].probDemand[k] == 0) k++;
+		while (g.vertices[route[i]].probDemand[k] == 0) k++;
 
-		for(j = 0; j < numDiffDemand; j++) {
+		for (j = 0; j < numDiffDemand; j++) {
 
-			if(g.vertices[route[i]].probDemand[k] != 0)
+			if (g.vertices[route[i]].probDemand[k] != 0)
 				A[i][j] = k;
 			else
 				break;
@@ -468,21 +491,21 @@ double bruteForceCost(Graph g, int capacity, vector<int> route) {
 
 	vector<int> B(numClients, 0);
 
-	for(i = 0; i < pow(numDiffDemand,numClients); i++) {
+	for (i = 0; i < pow(numDiffDemand, numClients); i++) {
 
 		double acc = costCen(A, B, g, route, capacity);
 
-		for(int k = 0; k < numClients; k++) {
+		for (int k = 0; k < numClients; k++) {
 			acc *= g.vertices[route[k]].probDemand[A[k][B[k]]];
 		}
 
 		expectedRouteCost += acc;
 
-		for(j = 0; j < numClients; j++) {
+		for (j = 0; j < numClients; j++) {
 
-			if(A[j][B[j]+1] != -1) {
+			if (A[j][B[j] + 1] != -1) {
 
-				for(k = j-1; k > -1; k--)
+				for (k = j - 1; k > -1; k--)
 					B[k] = 0;
 
 				B[j]++;
@@ -490,7 +513,7 @@ double bruteForceCost(Graph g, int capacity, vector<int> route) {
 			}
 		}
 
-		if(j == numClients)
+		if (j == numClients)
 			break;
 
 	}
@@ -505,17 +528,17 @@ void drawRoutes(Graph g, svrpSol solution, string nameOutputFile) {
 
 	int routeColor = 0;
 
-	for(int i = 0; i < solution.routes.size(); i++) {
+	for (unsigned int i = 0; i < solution.routes.size(); i++) {
 
-		if(solution.routes[i].size() > 0) {
+		if (solution.routes[i].size() > 0) {
 
 			routeMatrix[0][solution.routes[i][0]] = routeColor;
 			routeMatrix[solution.routes[i][0]][0] = routeColor;
 
-			int j;
-			for(j = 0; j < solution.routes[i].size()-1; j++) {
-				routeMatrix[solution.routes[i][j]][solution.routes[i][j+1]] = routeColor;
-				routeMatrix[solution.routes[i][j+1]][solution.routes[i][j]] = routeColor;
+			unsigned int j;
+			for (j = 0; j < solution.routes[i].size() - 1; j++) {
+				routeMatrix[solution.routes[i][j]][solution.routes[i][j + 1]] = routeColor;
+				routeMatrix[solution.routes[i][j + 1]][solution.routes[i][j]] = routeColor;
 			}
 
 			routeMatrix[solution.routes[i][j]][0] = routeColor;
@@ -525,9 +548,9 @@ void drawRoutes(Graph g, svrpSol solution, string nameOutputFile) {
 		}
 	}
 
-	for(int i = 0; i < g.numberVertices; i++) {
+	for (int i = 0; i < g.numberVertices; i++) {
 
-		for(int j = i+1; j < g.numberVertices; j++) {
+		for (int j = i + 1; j < g.numberVertices; j++) {
 
 			g.adjMatrix[i][j] = routeMatrix[i][j];
 			g.adjMatrix[j][i] = routeMatrix[j][i];

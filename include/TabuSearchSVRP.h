@@ -85,26 +85,25 @@ struct routeMove {
 
 struct svrpSol {
     vector<vector<int>> routes;
-    double expectedCost;
+    double expectedCost=0.0;
 };
 
 class TabuSearchSVRP {
 
+    
+public:
+
     Graph g;
-    long double penalty, bestPenalExpCost;
-    int numVehicles, capacity, numSelected, numNearest, numRoutes;
-    int itCount, numInfeasibleNearby;
-    int currNoImprovement, maxNoImprovement;
+    long double penalty = 0.0, bestPenalExpCost = 0.0;
+    int numVehicles = 0, capacity = 0, numSelected = 0, numNearest = 0, numRoutes = 0;
+    int itCount = 0, numInfeasibleNearby = 0;
+    int currNoImprovement = 0, maxNoImprovement = 0;
     routeMove moveDone;
     vector<int> routeOfClient;
     vector<double> relativeDemand;
     vector<vector<int>> closestNeighbours;
     vector<routeMove> tabuMoves;
     svrpSol sol, bestFeasibleSol;
-
-
-public:
-
     svrpSol run(Graph inst, int numVehicles, int capacity);
 
 private:
@@ -113,7 +112,6 @@ private:
     void initialize(Graph inst, int numVehicles, int capacity);
     void neighbourhoodSearch();
     void update();
-    void intensification();
 
     // Funções
     double penalizedExpectedLength(vector<vector<int>> sol);

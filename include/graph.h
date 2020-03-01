@@ -1,6 +1,10 @@
+#ifndef GRAPH_H
+#define GRAPH_H
+/*
 #include<lemon/math.h>
 #include<lemon/graph_to_eps.h>
 #include<lemon/list_graph.h>
+*/
 #include<iostream>
 #include<algorithm>
 #include<cmath>
@@ -10,7 +14,7 @@
 #include<time.h>
 
 using namespace std;
-using namespace lemon;
+//using namespace lemon;
 extern char verbosity;
 
 struct vertex {
@@ -28,8 +32,8 @@ class Graph {
 
 public:
 
-    int numberVertices;
-    double totalExpectedDemand;
+    int numberVertices = 0;
+    double totalExpectedDemand = 0.0;
     vector<double> expectedDemand;
     vector<vertex> vertices;
     vector<vector<double>> adjMatrix;
@@ -41,3 +45,4 @@ public:
     vector<int> TSP();
 
 };
+#endif

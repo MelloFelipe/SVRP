@@ -1,10 +1,13 @@
 #include "TabuSearchSVRP.h"
+#include<numeric>
 
 vector<vector<double>> probTotalDemand(Graph g, vector<int> route);
 
 double probReachCapacity(int i, Graph g, vector<vector<double>> f, int capacity, vector<int> route);
 
 double probExceedsCapacity(int i, Graph g, vector<vector<double>> f, int capacity, vector<int> route);
+
+double probExceedsCapacity(int i, Graph g, vector<vector<double>> f, int capacity, vector<int> route, int j);
 
 double returnCost (int i, int j, Graph g, vector<int> orderInRoute);
 

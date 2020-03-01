@@ -19,18 +19,18 @@ void Graph::createInstance(int n) {
     std::mt19937 generator(7); // Para instâncias fixas
 
     // Possíveis coordenadas dos vértices e probabilidade de presença
-    uniform_real_distribution<double> coordinate(0, 100), presence(0,1);
+    uniform_real_distribution<double> coordinate(0, 100), presence(0, 1);
 
     // Possíveis intervalos das demandas dos vértices
-    uniform_int_distribution<int> demRange(1,3);
+    uniform_int_distribution<int> demRange(1, 3);
 
     // Possíveis demandas dos vértices para cada intervalo
-    uniform_int_distribution<int> demand1(1,9), demand2(5,15), demand3(10,20);
+    uniform_int_distribution<int> demand1(1, 9), demand2(5, 15), demand3(10, 20);
 
     this->numberVertices = n;
     this->totalExpectedDemand = 0;
     this->expectedDemand.resize(n);
-    fill(this->expectedDemand.begin(),this->expectedDemand.end(),0);
+    fill(this->expectedDemand.begin(), this->expectedDemand.end(), 0);
 
     // Inicializar matriz de adjacências
     vector<double> v(n, 0);
@@ -51,59 +51,62 @@ void Graph::createInstance(int n) {
             newVertex.probOfPresence = presence(generator);
             range = demRange(generator);
 
-            switch(range) {
+            switch (range) {
 
                 // Intervalo [1,9]
-                case 1:
+            case 1:
 
-                    for (int j = 1; j < 21; j++) {
+                for (int j = 1; j < 21; j++) {
 
-                        if (j < 10) {
-                            newVertex.probDemand[j] = 1.0/9.0;
-                        } else {
-                            newVertex.probDemand[j] = 0;
-                        }
-
-                        this->expectedDemand[i] += newVertex.probDemand[j]*j;
-
+                    if (j < 10) {
+                        newVertex.probDemand[j] = 1.0 / 9.0;
+                    }
+                    else {
+                        newVertex.probDemand[j] = 0;
                     }
 
-                    break;
+                    this->expectedDemand[i] += newVertex.probDemand[j] * j;
+
+                }
+
+                break;
 
                 // Intervalo [5,15]
-                case 2:
+            case 2:
 
-                    for (int j = 1; j < 21; j++) {
+                for (int j = 1; j < 21; j++) {
 
-                        if (j >= 5 && j <= 15) {
-                            newVertex.probDemand[j] = 1.0/11.0;
-                        } else {
-                            newVertex.probDemand[j] = 0;
-                        }
-
-                        this->expectedDemand[i] += newVertex.probDemand[j]*j;
-
+                    if (j >= 5 && j <= 15) {
+                        newVertex.probDemand[j] = 1.0 / 11.0;
+                    }
+                    else {
+                        newVertex.probDemand[j] = 0;
                     }
 
-                    break;
+                    this->expectedDemand[i] += newVertex.probDemand[j] * j;
+
+                }
+
+                break;
 
                 // Intervalo [10,20]
-                case 3:
+            case 3:
 
-                    for (int j = 1; j < 21; j++) {
+                for (int j = 1; j < 21; j++) {
 
-                        if (j > 9) {
-                            newVertex.probDemand[j] = 1.0/11.0;
-                        } else {
-                            newVertex.probDemand[j] = 0;
-                        }
-
-                        this->expectedDemand[i] += newVertex.probDemand[j]*j;
-
+                    if (j > 9) {
+                        newVertex.probDemand[j] = 1.0 / 11.0;
+                    }
+                    else {
+                        newVertex.probDemand[j] = 0;
                     }
 
-                default:
-                    break;
+                    this->expectedDemand[i] += newVertex.probDemand[j] * j;
+
+                }
+
+            default:
+                break;
 
             }
 
@@ -214,7 +217,7 @@ vector<int> Graph::TSP() {
             minPath = vtxRouteOrder;
         }
 
-    } while(next_permutation(vtxRouteOrder.begin(), vtxRouteOrder.end()));
+    } while (next_permutation(vtxRouteOrder.begin(), vtxRouteOrder.end()));
 
     cout << "Smallest TSP route: ";
     for (int i = 0; i < minPath.size(); i++)
@@ -228,57 +231,61 @@ vector<int> Graph::TSP() {
 }
 
 void Graph::drawGraph(string graphName) {
+    /*
+      Palette palette;
+      Palette paletteW(true);
 
-  Palette palette;
-  Palette paletteW(true);
+      ListGraph g;
+      typedef ListGraph::Node Node;
+      typedef ListGraph::NodeIt NodeIt;
+      typedef ListGraph::Edge Edge;
+      typedef dim2::Point<int> Point;
 
-  ListGraph g;
-  typedef ListGraph::Node Node;
-  typedef ListGraph::NodeIt NodeIt;
-  typedef ListGraph::Edge Edge;
-  typedef dim2::Point<int> Point;
+      vector<Node> nodes;
 
-  vector<Node> nodes;
+      ListGraph::NodeMap<Point> coords(g);
+      //ListGraph::NodeMap<int> colors(g);
+      //ListGraph::NodeMap<int> shapes(g);
+      //ListGraph::EdgeMap<int> ecolors(g);
 
-  ListGraph::NodeMap<Point> coords(g);
-  ListGraph::NodeMap<int> colors(g);
-  ListGraph::NodeMap<int> shapes(g);
-  ListGraph::EdgeMap<int> ecolors(g);
+      for(int i = 0; i < this->numberVertices; i++) {
 
-  for(int i = 0; i < this->numberVertices; i++) {
+        nodes.push_back(g.addNode());
+        coords[nodes[i]] = Point(this->vertices[i].x, this->vertices[i].y);
 
-    nodes.push_back(g.addNode());
-    coords[nodes[i]] = Point(this->vertices[i].x, this->vertices[i].y);
-
-  }
-
-  // Destacar deposito
-  colors[nodes[0]] = 1;
-  shapes[nodes[0]] = 1;
-
-  for(int i = 0; i < this->numberVertices; i++) {
-
-    for(int j = i+1; j < this->numberVertices; j++) {
-
-      if(this->adjMatrix[i][j] >= 0) {
-
-        Edge e = g.addEdge(nodes[i],nodes[j]);
-        ecolors[e] = this->adjMatrix[i][j];
       }
 
-    }
-  }
+      // Destacar deposito
+      //colors[nodes[0]] = 1;
+      //shapes[nodes[0]] = 1;
 
-  cout << "Create " << graphName << endl;
+      for(int i = 0; i < this->numberVertices; i++) {
 
-  graphToEps(g, graphName).
-    coords(coords).
-    title("Figura do grafo").
-    copyright("(C) 2003-2007 LEMON Project").
-    nodeColors(composeMap(palette,colors)).
-    edgeColors(composeMap(palette,ecolors)).
-    run();
+        for(int j = i+1; j < this->numberVertices; j++) {
 
+          if(this->adjMatrix[i][j] >= 0) {
+
+            Edge e = g.addEdge(nodes[i],nodes[j]);
+            //ecolors[e] = this->adjMatrix[i][j];
+          }
+
+        }
+      }
+
+      cout << "Create " << graphName << endl;
+      /*
+      graphToEps(g, graphName).
+        coords(coords).
+        title("Figura do grafo").
+        copyright("(C) 2003-2007 LEMON Project").
+        nodeColors(composeMap(palette,colors)).
+        edgeColors(composeMap(palette,ecolors)).
+        run();
+      graphToEps(g, graphName).
+          //scale(10).
+          coords(coords).
+          title("Sample .eps figure").
+          copyright("(C) 2003-2007 LEMON Project").
+          run();*/
     return;
-
 }
