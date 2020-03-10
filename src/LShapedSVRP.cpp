@@ -36,7 +36,7 @@ vector<vector<int>> buildRoutesFromSol(double** sol, int n) {
 
                     // Atualizar cliente atual e resetar próximo
                     current = next;
-                    next = 1;
+                    next = 0;
 
                 }
             }
@@ -234,16 +234,14 @@ void solveSVRP(Graph g, int m, int Q, double L) {
             cout << "Matriz de solucao:" << endl;
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
-                    cout << sol[i][j] << " ";
+                    if (sol[i][j] > 0.5)
+                        cout << 1 << " ";
+                    else
+                        cout << 0 << " ";
                 }
                 cout << endl;
             }
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    if (sol[i][j] > 0.5)
-                        sol[j][i] = sol[i][j];
-                }
-            }
+            
             // Armazenar custo esperado do segundo estágio
             vector<vector<int>> routes = buildRoutesFromSol(sol, n);
             double expectedCost = totalExpectedLength(g, Q, routes);

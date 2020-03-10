@@ -7,8 +7,7 @@ svrpSol TabuSearchSVRP::run(Graph inst, int numVehicles, int capacity) {
 
 		initialize(inst, numVehicles, capacity);
 		int i;
-		char next = 'n';
-		return this->bestFeasibleSol;;
+		//return this->bestFeasibleSol;
 		for (i = 0; i < MAX_ITERATIONS; i++) {
 
 			if (verbosity == 'y') {
@@ -159,14 +158,15 @@ void TabuSearchSVRP::initialize(Graph inst, int numVehicles, int capacity) {
 	this->sol.routes.clear();
 
 	// Rotas de ida e volta ao depósito
-  for (int i = 1; i < this->g.numberVertices; i++) {
+	for (int i = 1; i < this->g.numberVertices; i++) {
 
-    vector<int> route(1, i);
-    this->sol.routes.push_back(route);
-    this->routeOfClient[i] = i-1;
+		vector<int> route(1, i);
+		this->sol.routes.push_back(route);
+		this->routeOfClient[i] = i-1;
 
-  }/*
-
+	}
+	this->numRoutes = this->g.numberVertices - 1;
+	/*this->numRoutes = this->numVehicles;
 	//Fetching number of clusters
 	int K = numVehicles;
 
@@ -198,10 +198,9 @@ void TabuSearchSVRP::initialize(Graph inst, int numVehicles, int capacity) {
 		}
 	}*/
 
-  this->penalty = 1;
-	this->numRoutes = this->g.numberVertices - 1;
+	this->penalty = 1;
 
-  this->sol.expectedCost = penalizedExpectedLength(this->sol.routes);
+	this->sol.expectedCost = penalizedExpectedLength(this->sol.routes);
 	this->bestPenalExpCost = this->sol.expectedCost;
 
 	if(verbosity == 'y')
