@@ -36,6 +36,7 @@ void Graph::createInstance(int n) {
     vector<double> v(n, 0);
     vector<vector<double>> matrix(n, v);
     this->adjMatrix = matrix;
+    this->maxDemand = 0;
 
     for (int i = 0; i < this->numberVertices; i++) {
 
@@ -68,6 +69,7 @@ void Graph::createInstance(int n) {
                     this->expectedDemand[i] += newVertex.probDemand[j] * j;
 
                 }
+                this->maxDemand += 9;
 
                 break;
 
@@ -86,6 +88,7 @@ void Graph::createInstance(int n) {
                     this->expectedDemand[i] += newVertex.probDemand[j] * j;
 
                 }
+                this->maxDemand += 15;
 
                 break;
 
@@ -104,6 +107,9 @@ void Graph::createInstance(int n) {
                     this->expectedDemand[i] += newVertex.probDemand[j] * j;
 
                 }
+                this->maxDemand += 20;
+
+                break;
 
             default:
                 break;

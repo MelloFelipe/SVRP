@@ -202,7 +202,8 @@ int main(int argc, const char** argv) {
             P += f[numberVertices-1][j];
         }
         //cout << "P: " << P << endl;
-        L += P * graph.adjMatrix[0][ts.closestNeighbours[0][i]];
+        if (i < ts.closestNeighbours[0].size())
+            L += P * graph.adjMatrix[0][ts.closestNeighbours[0][i]];
     }
     //cout << endl;
     

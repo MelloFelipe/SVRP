@@ -53,50 +53,63 @@ vector<vector<int>> buildRoutesFromSol(double** sol, int n) {
 class optimalityCut : public GRBCallback
 {
 public:
-    GRBVar** xvars;
+    GRBVar** x;
     int n, m, Q;
     double L;
-    Graph g;
+    Graph graph;
     vector<vector<int>> routes;
 
-    optimalityCut(GRBVar** xvars, int n, int m, double lowerBound, Graph g, int capacity) {
-        xvars = xvars;
-        n = n;
+    optimalityCut(GRBVar** xvars, int xn, int m, double lowerBound, Graph g, int capacity) {
+        x = xvars;
+        n = xn;
         m = m;
         L = lowerBound;
-        g = g;
+        graph = g;
         Q = capacity;
     }
 protected:
     void callback() {
         try {
             if (where == GRB_CB_MIPSOL) {
-                // Found an integer feasible solution - does it visit every node?
+                // Solução inteira viável encontrada
+                //cout << "Solucao inteira viavel encontrada" << endl;
                 double** xsol = new double* [n];
                 for (int i = 0; i < n; i++) {
-                    xsol[i] = getSolution(xvars[i], n);
-
+                    xsol[i] = getSolution(x[i], n);
                 }
-
+                /*cout << "xsol:" << endl;
+                for (int i = 0; i < n; i++) {
+                    for (int j = 0; j < n; j++) {
+                        cout << xsol[i][j] << " ";
+                    }
+                    cout << endl;
+                }*/
                 // Armazenar custo esperado do segundo estágio
                 routes = buildRoutesFromSol(xsol, n);
-                double expectedCost = totalExpectedLength(g, Q, routes);
+                /*cout << "Rotas:" << endl;
+                for (int i = 0; i < routes.size(); i++) {
+                    for (int j = 0; j < routes[i].size(); j++) {
+                        cout << routes[i][j] << " ";
+                    }
+                    cout << endl;
+                }*/
+                double expectedCost = totalExpectedLength(graph, Q, routes);
 
                 // Armazenar valor da solução encontrada
                 double objValue = getDoubleInfo(GRB_CB_MIPSOL_OBJ);
 
+                //cout << "objValue: " << objValue << "expectedCost: " << expectedCost << endl;
                 // Verificar se viola objValue >= expectedCost
-                if (objValue < expectedCost) {
-
+                if (L < expectedCost - objValue) {
                     GRBLinExpr expr = 0;
                     int rhs = 0;
 
                     /* Corte de optimalidade
                      * sum(x[i][j], xsol[i][j] = 1) <= sum(xsol[i][j]) - 1 */
                     for (int i = 0; i < n; i++) {
-                        for (int j = i + 1; j < n; j++) {
+                        for (int j = 0; j < n; j++) {
                             if (xsol[i][j] > 0.5) {
-                                expr += xvars[i][j];
+                                expr += x[i][j];
                                 rhs += 1;
                             }
                         }
@@ -105,6 +118,9 @@ protected:
                     addLazy(expr <= rhs - 1);
 
                 }
+                for (int i = 0; i < n; i++)
+                    delete[] xsol[i];
+                delete[] xsol;
             }
         }
         catch (GRBException e) {
@@ -205,7 +221,7 @@ void solveSVRP(Graph g, int m, int Q, double L) {
 
             /* Restrição u[i] <= Q para todo cliente:
              * - a capacidade do veículo não pode ser ultrapassada. */
-            model.addConstr(u[i] <= Q, "capacity_" + to_string(i));
+            model.addConstr(u[i] <= g.maxDemand, "capacity_" + to_string(i));
 
         }
 

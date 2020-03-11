@@ -33,6 +33,7 @@ class Graph {
 public:
 
     int numberVertices = 0;
+    int maxDemand = 0;
     double totalExpectedDemand = 0.0;
     vector<double> expectedDemand;
     vector<vertex> vertices;
