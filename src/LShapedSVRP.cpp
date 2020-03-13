@@ -3,6 +3,115 @@
 // Exemplo TSP:
 // https://www.gurobi.com/documentation/9.0/examples/tsp_cpp_cpp.html#subsubsection:tsp_c++.cpp
 
+double partialRouteExpectedCost(vector<int> S, double uExpectedDemand, double uDistance, vector<int> T, Graph g, int Q) {
+    double expectedCost = 0.0;
+
+    vector<int> h;
+    int i;
+
+    for (i = 0; i < S.size(); i++) {
+        h.push_back(S[i]);
+    }
+    h.push_back(0);
+    for (i = 0; i < T.size(); i++) {
+        h.push_back(T[i]);
+    }
+
+    // Inicializa a matriz com probabilidades 0
+    int next, orderInRoute = 1, routeSize = h.size();
+    vector<double> v(20 * routeSize + 1, 0);
+    vector<vector<double>> f(h.size() + 1, v);
+    double probDemandK;
+
+    f[0][0] = 1; // probabilidade da carga do veiculo até o depósito ser 0
+
+    while (orderInRoute <= routeSize) {
+
+        // Considera o próximo cliente da rota
+        next = h[orderInRoute - 1];
+
+        // Probabilidade de não haver nenhuma carga até o cliente, ou seja, todos ausentes
+        f[orderInRoute][0] = (1 - g.vertices[next].probOfPresence) * f[orderInRoute - 1][0];
+
+        // Para todas as demandas até o cliente possíveis
+        for (int dem = 1; dem <= 20 * orderInRoute; dem++) {
+
+            // Probabilidade do cliente estar ausente, mantendo a mesma demanda anterior
+            f[orderInRoute][dem] += (1 - g.vertices[next].probOfPresence) * f[orderInRoute - 1][dem];
+
+            // Para todas as demandas possíveis do cliente
+            for (int k = 1; k <= min(20, dem); k++) {
+
+                // Probabilidade do cliente estar presente com uma demanda k
+                probDemandK = g.vertices[next].probOfPresence * g.vertices[next].probDemand[k];
+
+                if (probDemandK > 0) {
+                    f[orderInRoute][dem] += probDemandK * f[orderInRoute - 1][dem - k];
+                }
+            }
+        }
+        orderInRoute++;
+    }
+
+    return expectedCost;
+}
+
+vector<int> buildHeuristicR(double** sol, int n, Graph g, int Q) {
+    int i, j, maxClient = 0;
+    double max = 0.0;
+
+    cout << "xsol:" << endl;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cout << sol[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    for (i = 1; i < n; i++) {
+        for (j = 2; j < n; j++) {
+            if (sol[0][i] + sol[i][j] > max) {
+                maxClient = i;
+                max = sol[0][i] + sol[i][j];
+            }
+        }
+    }
+
+    // maxClient is vi
+    vector<int> h;
+    h.push_back(maxClient);
+    double hExpectedDemand = g.expectedDemand[maxClient];
+
+    while (maxClient != 0) {
+        maxClient = 0;
+        max = 0.0;
+        double sum = 0.0;
+
+        for (i = 0; i < n; i++) {
+            if (hExpectedDemand + g.expectedDemand[i] < Q) {
+                for (j = 0; j < h.size(); j++) {
+                    if (i == h[j] && i != 0) {
+                        sum = 0.0;
+                        break;
+                    }
+                    sum += sol[h[j]][i];
+                }
+                if (sum > max) {
+                    maxClient = i;
+                    max = sum;
+                }
+            }
+        }
+
+        if (maxClient != 0) {
+            h.push_back(maxClient);
+            hExpectedDemand += g.expectedDemand[maxClient];
+        }
+    }
+
+    return h;
+}
+
 vector<vector<int>> buildRoutesFromSol(double** sol, int n) {
 
     vector<vector<int>> routes;
@@ -58,6 +167,7 @@ public:
     double L;
     Graph graph;
     vector<vector<int>> routes;
+    vector<int> R, S, T, U;
 
     optimalityCut(GRBVar** xvars, int xn, int m, double lowerBound, Graph g, int capacity) {
         x = xvars;
@@ -70,6 +180,47 @@ public:
 protected:
     void callback() {
         try {
+            
+            if (where == GRB_CB_MIPNODE) {
+                // MIP node callback
+
+                if (getIntInfo(GRB_CB_MIPNODE_STATUS) == GRB_OPTIMAL) {
+
+                    double** xsol = new double* [n];
+                    for (int i = 0; i < n; i++) {
+                        xsol[i] = getNodeRel(x[i], n);
+                    }
+                    R = buildHeuristicR(xsol, n, graph, Q);
+                    S.clear();
+                    S.push_back(R[0]);
+                    T.clear();
+                    double max = 0.0;
+                    int argMax = 0;
+                    for (int i = 1; i < R.size(); i++) {
+                        if (xsol[R[i]][0] > max) {
+                            max = xsol[R[i]][0];
+                            argMax = i;
+                        }
+                    }
+                    if (argMax != 0) {
+                        T.push_back(R[argMax]);
+                    }
+                    U = R;
+                    remove(U.begin(), U.end(), U[S[0]]);
+                    if (!T.empty)
+                        remove(U.begin(), U.end(), U[T[0]]);
+                    double uExpectedDemand = 0.0;
+                    double uDistance = numeric_limits<double>::max();
+                    for (int i = 0; i < U.size(); i++) {
+                        uExpectedDemand += graph.expectedDemand[U[i]];
+                        if (graph.adjMatrix[U[i]][0] < uDistance)
+                            uDistance = graph.adjMatrix[U[i]][0];
+                    }
+                    // Calcular custo recurso esperado da rota S, u, T
+                    double Ph = partialRouteExpectedCost(S, uExpectedDemand, uDistance, T, graph, Q);
+                }
+            }
+
             if (where == GRB_CB_MIPSOL) {
                 // Solução inteira viável encontrada
                 //cout << "Solucao inteira viavel encontrada" << endl;
@@ -122,6 +273,7 @@ protected:
                     delete[] xsol[i];
                 delete[] xsol;
             }
+            
         }
         catch (GRBException e) {
             cout << "Error number: " << e.getErrorCode() << endl;
